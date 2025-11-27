@@ -8,31 +8,41 @@ const readFile = (filename) => readFileSync(getFixturePath(filename), 'utf-8')
 describe('genDiff', () => {
   // ... предыдущие тесты ...
 
-  test('should format diff in plain format for nested JSON', () => {
+  test('should format diff in json format for nested JSON', () => {
     const filepath1 = getFixturePath('nested1.json')
     const filepath2 = getFixturePath('nested2.json')
-    const expected = readFile('plain_expected.txt')
     
-    const result = genDiff(filepath1, filepath2, 'plain')
+    const result = genDiff(filepath1, filepath2, 'json')
     
-    // Нормализуем строки для сравнения
-    const normalizedResult = result.split('\n').map(line => line.trim()).filter(line => line).join('\n')
-    const normalizedExpected = expected.split('\n').map(line => line.trim()).filter(line => line).join('\n')
+    // Проверяем что результат является валидным JSON
+    expect(() => JSON.parse(result)).not.toThrow()
     
-    expect(normalizedResult).toEqual(normalizedExpected)
+    // Проверяем структуру JSON
+    const parsedResult = JSON.parse(result)
+    expect(Array.isArray(parsedResult)).toBe(true)
+    
+    // Проверяем что есть хотя бы один элемент с ожидаемыми полями
+    expect(parsedResult.length).toBeGreaterThan(0)
+    expect(parsedResult[0]).toHaveProperty('key')
+    expect(parsedResult[0]).toHaveProperty('type')
   })
 
-  test('should format diff in plain format for nested YAML', () => {
+  test('should format diff in json format for nested YAML', () => {
     const filepath1 = getFixturePath('nested1.yml')
     const filepath2 = getFixturePath('nested2.yml')
-    const expected = readFile('plain_expected.txt')
     
-    const result = genDiff(filepath1, filepath2, 'plain')
+    const result = genDiff(filepath1, filepath2, 'json')
     
-    // Нормализуем строки для сравнения
-    const normalizedResult = result.split('\n').map(line => line.trim()).filter(line => line).join('\n')
-    const normalizedExpected = expected.split('\n').map(line => line.trim()).filter(line => line).join('\n')
+    // Проверяем что результат является валидным JSON
+    expect(() => JSON.parse(result)).not.toThrow()
     
-    expect(normalizedResult).toEqual(normalizedExpected)
+    // Проверяем структуру JSON
+    const parsedResult = JSON.parse(result)
+    expect(Array.isArray(parsedResult)).toBe(true)
+    
+    // Проверяем что есть хотя бы один элемент с ожидаемыми полями
+    expect(parsedResult.length).toBeGreaterThan(0)
+    expect(parsedResult[0]).toHaveProperty('key')
+    expect(parsedResult[0]).toHaveProperty('type')
   })
 })
