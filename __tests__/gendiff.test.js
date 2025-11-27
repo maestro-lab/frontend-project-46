@@ -12,11 +12,24 @@ describe('genDiff', () => {
     const expected = readFile('expected.txt')
     
     const result = genDiff(filepath1, filepath2)
+    expect(result.replace(/\s+/g, ' ').trim()).toEqual(expected.replace(/\s+/g, ' ').trim())
+  })
+
+  test('should compare flat YAML files correctly', () => {
+    const filepath1 = getFixturePath('file1.yml')
+    const filepath2 = getFixturePath('file2.yml')
+    const expected = readFile('expected.txt')
     
-    // Нормализуем пробелы для сравнения
-    const normalizedResult = result.replace(/\s+/g, ' ').trim()
-    const normalizedExpected = expected.replace(/\s+/g, ' ').trim()
+    const result = genDiff(filepath1, filepath2)
+    expect(result.replace(/\s+/g, ' ').trim()).toEqual(expected.replace(/\s+/g, ' ').trim())
+  })
+
+  test('should compare mixed JSON and YAML files correctly', () => {
+    const filepath1 = getFixturePath('file1.json')
+    const filepath2 = getFixturePath('file2.yml')
+    const expected = readFile('expected.txt')
     
-    expect(normalizedResult).toEqual(normalizedExpected)
+    const result = genDiff(filepath1, filepath2)
+    expect(result.replace(/\s+/g, ' ').trim()).toEqual(expected.replace(/\s+/g, ' ').trim())
   })
 })
