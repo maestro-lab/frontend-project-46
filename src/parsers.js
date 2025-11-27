@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs'
-import path from 'path'
+const { readFileSync } = require('fs')
+const path = require('path')
 
 const getFileContent = (filepath) => {
   const absolutePath = path.resolve(process.cwd(), filepath)
@@ -19,4 +19,4 @@ const parseFile = (filepath) => {
   }
 }
 
-export { parseFile, getFileContent }
+module.exports = { parseFile, getFileContent }

@@ -1,5 +1,5 @@
-import { parseFile } from './parsers.js'
-import _ from 'lodash'
+const { parseFile } = require('./parsers.js')
+const _ = require('lodash')
 
 const buildDiff = (data1, data2) => {
   const keys1 = Object.keys(data1)
@@ -53,4 +53,4 @@ const genDiff = (filepath1, filepath2, format = 'stylish') => {
   return formatDiff(diff)
 }
 
-export default genDiff
+module.exports = genDiff
