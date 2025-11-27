@@ -1,4 +1,5 @@
 const { parseFile } = require('./parsers.js')
+const getFormatter = require('./formatters/index.js')
 const _ = require('lodash')
 
 const buildDiff = (data1, data2) => {
@@ -40,57 +41,13 @@ const buildDiff = (data1, data2) => {
   return diff
 }
 
-const formatStylish = (diff, depth = 1) => {
-  const indent = ' '.repeat(4 * depth - 2)
-  const bracketIndent = ' '.repeat(4 * (depth - 1))
-  
-  const lines = diff.map((item) => {
-    switch (item.type) {
-      case 'deleted':
-        return `${indent}- ${item.key}: ${formatValue(item.value, depth + 1)}`
-      case 'added':
-        return `${indent}+ ${item.key}: ${formatValue(item.value, depth + 1)}`
-      case 'changed':
-        return `${indent}- ${item.key}: ${formatValue(item.oldValue, depth + 1)}\n${indent}+ ${item.key}: ${formatValue(item.newValue, depth + 1)}`
-      case 'unchanged':
-        return `${indent}  ${item.key}: ${formatValue(item.value, depth + 1)}`
-      case 'nested':
-        return `${indent}  ${item.key}: ${formatStylish(item.children, depth + 1)}`
-      default:
-        return ''
-    }
-  })
-  
-  return `{\n${lines.join('\n')}\n${bracketIndent}}`
-}
-
-const formatValue = (value, depth) => {
-  if (_.isPlainObject(value)) {
-    const indent = ' '.repeat(4 * depth - 2)
-    const bracketIndent = ' '.repeat(4 * (depth - 1))
-    
-    const lines = Object.entries(value).map(([key, val]) => {
-      return `${indent}  ${key}: ${formatValue(val, depth + 1)}`
-    })
-    
-    return `{\n${lines.join('\n')}\n${bracketIndent}}`
-  }
-  
-  if (value === null) return 'null'
-  if (value === '') return ''
-  return String(value)
-}
-
 const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const data1 = parseFile(filepath1)
   const data2 = parseFile(filepath2)
   const diff = buildDiff(data1, data2)
+  const formatter = getFormatter(format)
   
-  if (format === 'stylish') {
-    return formatStylish(diff)
-  }
-  
-  return formatStylish(diff) // пока только stylish
+  return formatter(diff)
 }
 
 module.exports = genDiff
